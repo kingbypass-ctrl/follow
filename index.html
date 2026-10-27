@@ -1,226 +1,446 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kingbypass - Get Bypass Link</title>
-<style>
-  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Roboto,Arial,sans-serif; }
-  body {
-    min-height:100vh;
-    background: linear-gradient(135deg,#0f0c29,#302b63,#24243e);
-    display:flex; align-items:center; justify-content:center;
-    padding:20px; color:#fff;
-  }
-  .container {
-    width:100%; max-width:420px;
-    background:rgba(255,255,255,0.06);
-    backdrop-filter:blur(15px);
-    border:1px solid rgba(255,255,255,0.12);
-    border-radius:24px; padding:32px 26px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.5);
-    text-align:center; animation:fadeIn .6s ease;
-  }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LiteRouter AI - RGB Test Environment</title>
+    
+    <!-- Các thư viện hỗ trợ Markdown, Highlight Code và Bảo mật DOM -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
 
-  .logo {
-    width:70px; height:70px; margin:0 auto 16px;
-    border-radius:50%;
-    background:linear-gradient(135deg,#25F4EE,#FE2C55);
-    display:flex; align-items:center; justify-content:center;
-    font-size:34px; box-shadow:0 0 25px rgba(254,44,85,.5);
-    animation:pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%,100%{box-shadow:0 0 25px rgba(254,44,85,.5);}
-    50%{box-shadow:0 0 40px rgba(37,244,238,.7);}
-  }
-  h1 {
-    font-size:22px; margin-bottom:8px;
-    background:linear-gradient(90deg,#25F4EE,#FE2C55);
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    background-clip:text;
-  }
-  .subtitle { font-size:13px; color:#b8b8d0; margin-bottom:26px; line-height:1.5; }
+    <style>
+        /* === CSS RGB GAMING THEME === */
+        :root {
+            --bg-dark: #07070a;
+            --bg-panel: #111118;
+            --neon-cyan: #00f3ff;
+            --neon-purple: #b026ff;
+            --neon-red: #ff2a5f;
+            --text-main: #e2e8f0;
+            --border-glow-cyan: 0 0 10px rgba(0, 243, 255, 0.3);
+            --border-glow-purple: 0 0 10px rgba(176, 38, 255, 0.3);
+        }
 
-  .btn {
-    width:100%; padding:15px 18px; border:none; border-radius:14px;
-    font-size:15px; font-weight:700; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    text-decoration:none; transition:all .25s ease;
-    margin-bottom:14px; position:relative; overflow:hidden;
-  }
-  .btn-tiktok {
-    background:linear-gradient(135deg,#25F4EE,#FE2C55); color:#fff;
-    box-shadow:0 8px 22px rgba(254,44,85,.4);
-  }
-  .btn-tiktok:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(254,44,85,.6); }
-  .btn-bypass {
-    background:linear-gradient(135deg,#00c853,#00e676); color:#062b13;
-    box-shadow:0 8px 22px rgba(0,200,83,.35);
-  }
-  .btn-bypass:hover:not(.locked) { transform:translateY(-2px); box-shadow:0 12px 30px rgba(0,200,83,.55); }
-  .btn-bypass.locked {
-    background:rgba(255,255,255,0.08); color:#8888a0;
-    cursor:not-allowed; box-shadow:none;
-    border:1px dashed rgba(255,255,255,0.2);
-  }
-  .btn:active { transform:translateY(0); }
-  .icon { font-size:18px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
 
-  .status {
-    font-size:12.5px; margin-top:12px; padding:10px;
-    border-radius:10px; transition:all .3s ease;
-  }
-  .status.locked-state {
-    background:rgba(255,80,80,0.12); color:#ff7a7a;
-    border:1px solid rgba(255,80,80,0.25);
-  }
-  .status.unlocked-state {
-    background:rgba(0,230,118,0.12); color:#4dffa6;
-    border:1px solid rgba(0,230,118,0.3);
-  }
-  .footer { margin-top:20px; font-size:11px; color:#6c6c8a; }
+        /* Scrollbar tàng hình / ngầu */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-purple); }
 
-  .toast {
-    position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-100px);
-    background:linear-gradient(135deg,#00c853,#00e676);
-    color:#062b13; padding:12px 22px; border-radius:12px;
-    font-size:13.5px; font-weight:700;
-    box-shadow:0 10px 30px rgba(0,200,83,.5);
-    transition:transform .4s cubic-bezier(.34,1.56,.64,1);
-    z-index:9999; pointer-events:none;
-  }
-  .toast.show { transform:translateX(-50%) translateY(0); }
+        /* Nút bấm RGB */
+        .btn-rgb {
+            background: linear-gradient(45deg, var(--bg-panel), #1a1a24);
+            color: #fff; border: 1px solid var(--neon-purple); padding: 10px 15px;
+            border-radius: 6px; cursor: pointer; font-weight: bold; text-transform: uppercase;
+            transition: all 0.3s; position: relative; overflow: hidden;
+            box-shadow: var(--border-glow-purple);
+        }
+        .btn-rgb:hover {
+            background: var(--neon-purple); color: #000; box-shadow: 0 0 20px var(--neon-purple);
+        }
+        .btn-cyan { border-color: var(--neon-cyan); box-shadow: var(--border-glow-cyan); }
+        .btn-cyan:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 20px var(--neon-cyan); }
+        .btn-danger { border-color: var(--neon-red); box-shadow: 0 0 10px rgba(255, 42, 95, 0.3); color: var(--neon-red); }
+        .btn-danger:hover { background: var(--neon-red); color: #fff; }
 
-  @keyframes shake {
-    0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);}
-  }
-</style>
+        /* API Key Overlay */
+        #api-overlay {
+            position: fixed; inset: 0; background: rgba(7, 7, 10, 0.95); z-index: 1000;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .api-box {
+            background: var(--bg-panel); padding: 30px; border-radius: 12px;
+            border: 1px solid var(--neon-cyan); box-shadow: var(--border-glow-cyan);
+            width: 90%; max-width: 400px; text-align: center;
+        }
+        .api-box input {
+            width: 100%; padding: 12px; margin: 20px 0; background: #000; border: 1px solid #333;
+            color: var(--neon-cyan); border-radius: 6px; outline: none; font-family: monospace;
+        }
+        .api-box input:focus { border-color: var(--neon-cyan); box-shadow: var(--border-glow-cyan); }
+
+        /* Layout Main */
+        #app { display: none; width: 100%; height: 100%; }
+        #sidebar { width: 280px; background: var(--bg-panel); border-right: 1px solid #333; display: flex; flex-direction: column; padding: 15px; transition: 0.3s; }
+        #chat-area { flex: 1; display: flex; flex-direction: column; position: relative; }
+
+        .logo { font-size: 1.5rem; font-weight: 900; color: #fff; text-shadow: 0 0 10px var(--neon-cyan); margin-bottom: 20px; text-align: center; letter-spacing: 2px; }
+        
+        /* Sidebar Chat List */
+        #history-list { flex: 1; overflow-y: auto; margin-top: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .chat-item {
+            padding: 12px; background: rgba(255,255,255,0.02); border-radius: 6px; cursor: pointer;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9rem;
+            border-left: 3px solid transparent; transition: 0.2s;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-item:hover { background: rgba(255,255,255,0.05); }
+        .chat-item.active { border-left-color: var(--neon-cyan); background: rgba(0, 243, 255, 0.1); }
+        .del-btn { color: #888; background: none; border: none; cursor: pointer; padding: 0 5px; }
+        .del-btn:hover { color: var(--neon-red); }
+
+        /* Header Chat Area */
+        .chat-header {
+            padding: 15px 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; background: rgba(17, 17, 24, 0.8); backdrop-filter: blur(10px);
+        }
+        .model-select {
+            background: #000; color: var(--neon-purple); border: 1px solid var(--neon-purple);
+            padding: 8px 12px; border-radius: 6px; outline: none; cursor: pointer; font-weight: bold; box-shadow: var(--border-glow-purple);
+        }
+
+        /* Messages */
+        #messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth; }
+        .msg { max-width: 85%; line-height: 1.6; font-size: 0.95rem; display: flex; flex-direction: column; }
+        .msg.user { align-self: flex-end; }
+        .msg.user .bubble {
+            background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.3); border-right: 3px solid var(--neon-cyan); padding: 12px 18px; border-radius: 12px 2px 12px 12px;
+        }
+        .msg.ai { align-self: flex-start; width: 100%; max-width: 90%; }
+        .msg.ai .bubble {
+            background: rgba(176, 38, 255, 0.05); border: 1px solid rgba(176, 38, 255, 0.3); border-left: 3px solid var(--neon-purple); padding: 12px 18px; border-radius: 2px 12px 12px 12px; width: 100%;
+        }
+
+        /* Markdown & Code Styles */
+        .msg.ai .bubble p { margin-bottom: 10px; }
+        .msg.ai .bubble p:last-child { margin-bottom: 0; }
+        .code-container { position: relative; margin: 10px 0; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
+        .code-header { background: #1a1a24; padding: 5px 15px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #888; border-bottom: 1px solid #333; }
+        .copy-btn { background: none; border: none; color: var(--neon-cyan); cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
+        .copy-btn:hover { text-shadow: 0 0 5px var(--neon-cyan); }
+        pre { margin: 0; padding: 15px; overflow-x: auto; background: #07070a !important; font-family: monospace; font-size: 0.9rem; }
+        
+        table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+        th, td { border: 1px solid #444; padding: 8px; text-align: left; }
+        th { background: rgba(176, 38, 255, 0.2); }
+
+        /* Input Area */
+        .input-area { padding: 20px; background: var(--bg-panel); border-top: 1px solid #333; }
+        .input-box { display: flex; gap: 10px; background: #000; border: 1px solid #333; border-radius: 12px; padding: 10px; transition: 0.3s; }
+        .input-box:focus-within { border-color: var(--neon-cyan); box-shadow: var(--border-glow-cyan); }
+        textarea { flex: 1; background: transparent; border: none; color: #fff; padding: 5px; resize: none; outline: none; font-size: 1rem; max-height: 150px; }
+        .action-btns { display: flex; flex-direction: column; justify-content: flex-end; gap: 5px; }
+
+        @media (max-width: 768px) {
+            #sidebar { position: absolute; height: 100%; z-index: 10; transform: translateX(-100%); width: 260px; }
+            #sidebar.open { transform: translateX(0); box-shadow: 10px 0 20px rgba(0,0,0,0.8); }
+            .msg { max-width: 95%; }
+        }
+        .menu-btn { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+        @media (max-width: 768px) { .menu-btn { display: block; } }
+
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="logo">👑</div>
-    <h1>KINGBYPASS🐸</h1>
-    <p class="subtitle">Follow TikTok để mở khóa link bypass<br>Bước 1: Follow → Bước 2: Lấy link</p>
 
-    <a id="tiktokBtn" class="btn btn-tiktok" href="https://tiktok.com/@kingbypassofnone" target="_blank" rel="noopener">
-      <span class="icon">🎵</span> Follow TikTok @kingbypass🐸
-    </a>
+    <!-- MÀN HÌNH NHẬP API KEY -->
+    <div id="api-overlay">
+        <div class="api-box">
+            <h2 style="color: #fff; text-shadow: 0 0 10px var(--neon-cyan); margin-bottom: 10px;">LITEROUTER AI</h2>
+            <p style="font-size: 0.9rem; color: #aaa;">Môi trường thử nghiệm trực tiếp (Local Test). API Key chỉ lưu trên trình duyệt của bạn.</p>
+            <input type="password" id="api-key-input" placeholder="Nhập API Key bắt đầu bằng sk-...">
+            <button class="btn-rgb btn-cyan" onclick="saveApiKey()">XÁC NHẬN / KHỞI ĐỘNG</button>
+            <button class="btn-rgb" style="margin-top: 10px; background: transparent;" onclick="clearApiKey()">Xóa Key Cũ</button>
+        </div>
+    </div>
 
-    <a id="bypassBtn" class="btn btn-bypass locked" href="#" aria-disabled="true">
-      <span class="icon" id="lockIcon">🔒</span>
-      <span id="bypassText">Lấy Bypass Link (Đã khóa)</span>
-    </a>
+    <!-- ỨNG DỤNG CHÍNH -->
+    <div id="app">
+        <!-- SIDEBAR -->
+        <aside id="sidebar">
+            <div class="logo">RGB<span style="color: var(--neon-purple);">CORE</span></div>
+            <button class="btn-rgb" onclick="createNewChat()">+ HỘI THOẠI MỚI</button>
+            <div id="history-list"></div>
+            <button class="btn-rgb btn-danger" style="margin-top: auto;" onclick="logout()">ĐÓNG PHIÊN</button>
+        </aside>
 
-    <div id="status" class="status locked-state">⚠️ Bạn cần Follow TikTok trước để mở khóa</div>
+        <!-- CHAT AREA -->
+        <main id="chat-area">
+            <header class="chat-header">
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="color: #888; font-size: 0.9rem;">Model:</span>
+                    <select id="model-select" class="model-select">
+                        <option value="gpt-4o-mini">Đang tải danh sách model...</option>
+                    </select>
+                </div>
+                <div id="status-dot" style="width: 10px; height: 10px; background: #00f3ff; border-radius: 50%; box-shadow: 0 0 10px #00f3ff;"></div>
+            </header>
 
-    <div class="footer">© 2026 Kingbypass • Tool Bypass</div>
-  </div>
+            <div id="messages">
+                <!-- Tin nhắn hiển thị ở đây -->
+            </div>
 
-  <div id="toast" class="toast">✅ Đã lưu trạng thái!</div>
+            <footer class="input-area">
+                <div class="input-box">
+                    <textarea id="prompt" rows="1" placeholder="Nhập lệnh... (Shift + Enter để xuống dòng)" oninput="autoResize(this)" onkeydown="handleEnter(event)"></textarea>
+                    <div class="action-btns">
+                        <button id="stop-btn" class="btn-rgb btn-danger" style="display: none; padding: 8px 12px;" onclick="stopStream()">⏹ Dừng</button>
+                        <button id="send-btn" class="btn-rgb btn-cyan" style="padding: 8px 12px;" onclick="sendMessage()">➤ Gửi</button>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
 
-  <script>
-  (function () {
-    'use strict';
-    const BYPASS_URL = 'https://kingbypass-ctrl.github.io/vuknlito/';
-    const KEY        = 'ks102_tiktok_unlocked_v3';
-    const COOKIE_DAYS = 365;
+    <!-- === LOGIC JAVASCRIPT === -->
+    <script>
+        // Cấu hình Base
+        const BASE_URL = 'https://literouter.fun/v1';
+        let apiKey = localStorage.getItem('literouter_key') || '';
+        let currentChatId = null;
+        let chats = JSON.parse(localStorage.getItem('literouter_chats')) || {};
+        let abortController = null;
 
-    const tiktokBtn  = document.getElementById('tiktokBtn');
-    const bypassBtn  = document.getElementById('bypassBtn');
-    const lockIcon   = document.getElementById('lockIcon');
-    const bypassText = document.getElementById('bypassText');
-    const status     = document.getElementById('status');
-    const toast      = document.getElementById('toast');
+        // Cấu hình Markdown & HighlightJS
+        marked.setOptions({
+            highlight: function(code, lang) {
+                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                return hljs.highlight(code, { language }).value;
+            }
+        });
 
-    /* ---------- 3 lớp lưu trữ: localStorage + cookie + sessionStorage ---------- */
+        // Khởi động
+        window.onload = () => {
+            if (apiKey) {
+                document.getElementById('api-overlay').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                initApp();
+            }
+        };
 
-    function setStorage(key, val) {
-      try { localStorage.setItem(key, val); } catch (e) { console.warn('localStorage lỗi:', e); }
-      try {
-        const d = new Date();
-        d.setTime(d.getTime() + COOKIE_DAYS * 24 * 60 * 60 * 1000);
-        document.cookie = key + '=' + encodeURIComponent(val) +
-          ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
-      } catch (e) { console.warn('cookie lỗi:', e); }
-      try { sessionStorage.setItem(key, val); } catch (e) {}
-    }
-
-    function getStorage(key) {
-      try { if (localStorage.getItem(key) === 'true') return true; } catch (e) {}
-      try {
-        const m = document.cookie.match(new RegExp('(?:^|; )' + key + '=([^;]*)'));
-        if (m && decodeURIComponent(m[1]) === 'true') return true;
-      } catch (e) {}
-      try { if (sessionStorage.getItem(key) === 'true') return true; } catch (e) {}
-      return false;
-    }
-
-    const isUnlocked = () => getStorage(KEY);
-
-    let toastTimer;
-    function showToast(msg) {
-      toast.textContent = msg;
-      toast.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
-    }
-
-    /* ---------- Render ---------- */
-    function render() {
-      if (isUnlocked()) {
-        bypassBtn.classList.remove('locked');
-        bypassBtn.setAttribute('href', BYPASS_URL);
-        bypassBtn.setAttribute('target', '_blank');
-        bypassBtn.setAttribute('rel', 'noopener');
-        bypassBtn.removeAttribute('aria-disabled');
-        lockIcon.textContent = '🔓';
-        bypassText.textContent = 'Lấy Bypass Link';
-        status.className = 'status unlocked-state';
-        status.textContent = '✅ Đã mở khóa! Nhấn "Lấy Bypass Link" để tiếp tục';
-      } else {
-        bypassBtn.classList.add('locked');
-        bypassBtn.setAttribute('href', '#');
-        bypassBtn.removeAttribute('target');
-        bypassBtn.removeAttribute('rel');
-        bypassBtn.setAttribute('aria-disabled', 'true');
-        lockIcon.textContent = '🔒';
-        bypassText.textContent = 'Lấy Bypass Link (Đã khóa)';
-        status.className = 'status locked-state';
-        status.textContent = '⚠️ Bạn cần Follow TikTok trước để mở khóa';
-      }
-    }
-
-    /* ---------- Nút TikTok: lưu ở nhiều event ---------- */
-    ['mousedown','pointerdown','touchstart','click'].forEach(evt => {
-      tiktokBtn.addEventListener(evt, function () {
-        if (!isUnlocked()) {
-          setStorage(KEY, 'true');
-          render();
-          showToast('✅ Đã lưu: Follow TikTok');
+        // --- QUẢN LÝ API KEY ---
+        function saveApiKey() {
+            const key = document.getElementById('api-key-input').value.trim();
+            if (key.startsWith('sk-')) {
+                localStorage.setItem('literouter_key', key);
+                apiKey = key;
+                document.getElementById('api-overlay').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                initApp();
+            } else {
+                alert('API Key không hợp lệ. Vui lòng nhập đúng định dạng (sk-...)');
+            }
         }
-      }, { passive: true });
-    });
+        function clearApiKey() { localStorage.removeItem('literouter_key'); location.reload(); }
+        function logout() { clearApiKey(); }
 
-    /* ---------- Chặn click bypass khi khóa ---------- */
-    bypassBtn.addEventListener('click', function (e) {
-      if (!isUnlocked()) {
-        e.preventDefault();
-        status.textContent = '🚫 Vui lòng Follow TikTok trước!';
-        status.className = 'status locked-state';
-        bypassBtn.style.animation = 'none';
-        void bypassBtn.offsetHeight;
-        bypassBtn.style.animation = 'shake 0.4s';
-      }
-    });
+        // --- KHỞI TẠO ỨNG DỤNG ---
+        async function initApp() {
+            fetchModels();
+            renderChatList();
+            const chatIds = Object.keys(chats);
+            if (chatIds.length === 0) createNewChat();
+            else loadChat(chatIds[chatIds.length - 1]);
+        }
 
-    /* ---------- Debug ---------- */
-    console.log('🔍 Kingbypass - Trạng thái ban đầu: Unlocked =', isUnlocked());
+        // --- FETCH MODELS ---
+        async function fetchModels() {
+            try {
+                const res = await fetch(`${BASE_URL}/models`, { headers: { 'Authorization': `Bearer ${apiKey}` }});
+                if (res.ok) {
+                    const json = await res.json();
+                    const select = document.getElementById('model-select');
+                    select.innerHTML = json.data.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
+                }
+            } catch (e) {
+                console.log('Không lấy được model, dùng mặc định.');
+                document.getElementById('model-select').innerHTML = `
+                    <option value="gpt-4o-mini">gpt-4o-mini</option>
+                    <option value="claude-3-5-sonnet-20240620">claude-3-5-sonnet</option>
+                    <option value="deepseek-chat">deepseek-chat</option>
+                `;
+            }
+        }
 
-    /* ---------- Khởi tạo ---------- */
-    render();
-  })();
-  </script>
+        // --- QUẢN LÝ LỊCH SỬ CHAT (LOCAL STORAGE) ---
+        function saveChats() { localStorage.setItem('literouter_chats', JSON.stringify(chats)); }
+        
+        function createNewChat() {
+            const id = Date.now().toString();
+            chats[id] = { title: 'Hội thoại mới', messages: [] };
+            saveChats();
+            renderChatList();
+            loadChat(id);
+        }
+
+        function deleteChat(id, event) {
+            event.stopPropagation();
+            delete chats[id];
+            saveChats();
+            renderChatList();
+            const remaining = Object.keys(chats);
+            if (remaining.length === 0) createNewChat();
+            else loadChat(remaining[remaining.length - 1]);
+        }
+
+        function renderChatList() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = Object.keys(chats).reverse().map(id => `
+                <div class="chat-item ${id === currentChatId ? 'active' : ''}" onclick="loadChat('${id}')">
+                    <span style="overflow:hidden; text-overflow:ellipsis; width:80%;">${chats[id].title}</span>
+                    <button class="del-btn" onclick="deleteChat('${id}', event)">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function loadChat(id) {
+            currentChatId = id;
+            renderChatList();
+            const msgContainer = document.getElementById('messages');
+            msgContainer.innerHTML = '';
+            chats[id].messages.forEach(m => renderMessageUI(m.role, m.content, false));
+            scrollToBottom();
+            if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+        }
+
+        // --- GIAO DIỆN & TƯƠNG TÁC ---
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function autoResize(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
+        function scrollToBottom() { const el = document.getElementById('messages'); el.scrollTop = el.scrollHeight; }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        }
+
+        // Cập nhật hàm Render để bọc Code block và thêm nút Copy
+        function parseMarkdownWithCopyBtn(content) {
+            const rawHtml = marked.parse(content);
+            // Dùng Regex để bọc thẻ <pre><code>... vào một container có nút copy
+            return rawHtml.replace(/<pre><code class="language-(.*?)">([\s\S]*?)<\/code><\/pre>/g, (match, lang, code) => {
+                const encodedCode = code.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                return `
+                <div class="code-container">
+                    <div class="code-header">
+                        <span>${lang || 'code'}</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code class="language-${lang}">${code}</code></pre>
+                </div>`;
+            });
+        }
+
+        function copyCode(btn) {
+            const pre = btn.parentElement.nextElementSibling;
+            navigator.clipboard.writeText(pre.innerText).then(() => {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✔ Copied!';
+                btn.style.color = '#00ff00';
+                setTimeout(() => { btn.innerHTML = originalText; btn.style.color = ''; }, 2000);
+            });
+        }
+
+        function renderMessageUI(role, content, isStreaming = false) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `msg ${role}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            
+            // Nếu đang stream, chỉ render text thường trước, xong mới parse Markdown để tránh vỡ HTML
+            if (isStreaming) {
+                bubble.innerHTML = DOMPurify.sanitize(marked.parse(content + ' ▍'));
+            } else {
+                bubble.innerHTML = DOMPurify.sanitize(parseMarkdownWithCopyBtn(content));
+            }
+
+            msgDiv.appendChild(bubble);
+            document.getElementById('messages').appendChild(msgDiv);
+            scrollToBottom();
+            return bubble;
+        }
+
+        // --- GỌI API & STREAMING ---
+        function stopStream() { if (abortController) abortController.abort(); }
+
+        async function sendMessage() {
+            const input = document.getElementById('prompt');
+            const text = input.value.trim();
+            if (!text) return;
+
+            // Update UI User
+            input.value = ''; input.style.height = 'auto';
+            chats[currentChatId].messages.push({ role: 'user', content: text });
+            
+            // Tự tạo title nếu là tin đầu tiên
+            if (chats[currentChatId].messages.length === 1) {
+                chats[currentChatId].title = text.substring(0, 25) + '...';
+                renderChatList();
+            }
+            saveChats();
+            renderMessageUI('user', text, false);
+
+            // Nút UI trạng thái
+            document.getElementById('send-btn').style.display = 'none';
+            document.getElementById('stop-btn').style.display = 'block';
+            document.getElementById('status-dot').style.background = '#ff2a5f'; // Đổi màu đèn báo đỏ (đang tải)
+
+            const model = document.getElementById('model-select').value;
+            // Chỉ gửi 10 tin nhắn gần nhất để tránh lỗi vượt token
+            const contextToSend = chats[currentChatId].messages.slice(-10);
+            
+            const aiBubble = renderMessageUI('ai', '...', true);
+            let fullAiContent = '';
+            abortController = new AbortController();
+
+            try {
+                const response = await fetch(`${BASE_URL}/chat/completions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                    body: JSON.stringify({ model: model, messages: contextToSend, stream: true }),
+                    signal: abortController.signal
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.trim() === 'data: [DONE]') break;
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.substring(6));
+                                if (data.choices && data.choices[0].delta.content) {
+                                    fullAiContent += data.choices[0].delta.content;
+                                    // Cập nhật UI liên tục
+                                    aiBubble.innerHTML = DOMPurify.sanitize(marked.parse(fullAiContent + ' ▍'));
+                                    scrollToBottom();
+                                }
+                            } catch (err) {}
+                        }
+                    }
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') fullAiContent += '\n\n*(Đã dừng phản hồi)*';
+                else fullAiContent = `⚠️ **Lỗi kết nối:** ${error.message}`;
+            } finally {
+                // Hoàn thiện tin nhắn, parse Markdown đầy đủ với nút Code
+                aiBubble.innerHTML = DOMPurify.sanitize(parseMarkdownWithCopyBtn(fullAiContent));
+                
+                // Lưu vào lịch sử
+                chats[currentChatId].messages.push({ role: 'assistant', content: fullAiContent });
+                saveChats();
+
+                // Trả UI về bình thường
+                document.getElementById('send-btn').style.display = 'block';
+                document.getElementById('stop-btn').style.display = 'none';
+                document.getElementById('status-dot').style.background = '#00f3ff'; // Đèn xanh lại
+            }
+        }
+    </script>
 </body>
 </html>
